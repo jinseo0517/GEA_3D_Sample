@@ -34,11 +34,22 @@ public class PlayerController : MonoBehaviour
     {
         //땅에 닿아있는지 확인
         isGrounded = controller.isGrounded;
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            speed = 10f;
+            virtualCam.m_Lens.FieldOfView = 80f;
+        }
+        else
+        {
+            speed = 5f;
+            virtualCam.m_Lens.FieldOfView = 60f;
+        }
         if (isGrounded && velocity.y <0)
         {
-            velocity.y = -2f; //지면에 붙이기
+            velocity.y = -2f;   //지면에 붙이기
         }
 
+        //입력값 받기
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
