@@ -27,9 +27,10 @@ public class Enemy : MonoBehaviour
         transform.LookAt(lookPos);
     }
 
-    public void TakeDAmage( int damage )
+    public void TakeDamage( int damage )
     {
         health -= damage;
+        Debug.Log($"{health}");
 
         if (health <= 0)
         {
