@@ -20,6 +20,7 @@ public class CinemachineSwitcher : MonoBehaviour
     // 매 프레임마다 호출되는 업데이트 함수
     void Update()
     {
+
         // ESC 키를 누르면 커서 잠금/해제 토글
         if (Input.GetKeyDown(KeyCode.Escape)) { ToggleCursor(); }
 

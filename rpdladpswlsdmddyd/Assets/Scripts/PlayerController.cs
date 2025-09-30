@@ -2,6 +2,7 @@ using Cinemachine; // 시네머신 카메라 기능 사용
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -37,15 +38,29 @@ public class PlayerController : MonoBehaviour
     // 카메라 모드 확인용 스크립트 참조
     public CinemachineSwitcher cinemachineSwitcher;
 
+    public int maxHP = 100;
+    private int currentHP;
+
+    public Slider hpSlider;
+
     void Start()
     {
         // 캐릭터 컨트롤러와 POV 컴포넌트 초기화
         controller = GetComponent<CharacterController>();
         pov = virtualCam.GetCinemachineComponent<CinemachinePOV>();
+
+        currentHP = maxHP;
+        hpSlider.value = 1f;
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            pov.m_HorizontalAxis.Value = transform.eulerAngles.y;
+            pov.m_VerticalAxis.Value = 0f;
+        }
+
         // FreeLook 모드가 아닐 때만 이동 속도 설정
         if (cinemachineSwitcher.usingFreeLook == false)
         {
@@ -126,5 +141,20 @@ public class PlayerController : MonoBehaviour
 
         // 수직 방향 이동 처리
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHP -= damage;
+        hpSlider.value = (float)currentHP / maxHP;
+
+        if (currentHP <= 0)
+        {
+            Die();
+        }
+    }
+    void Die()
+    {
+        Destroy(gameObject);
     }
 }
