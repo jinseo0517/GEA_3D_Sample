@@ -44,7 +44,7 @@ public class EnemyProjectile : MonoBehaviour
             PlayerController pc = other.GetComponent<PlayerController>();
 
             // 컴포넌트가 존재하면 피해를 입힘
-            if (pc != null) pc.TakeDamage(damage);
+            //if (pc != null) pc.TakeDamage(damage);
 
             // 투사체 제거
             Destroy(gameObject);
