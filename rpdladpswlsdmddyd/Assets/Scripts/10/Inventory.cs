@@ -34,10 +34,4 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
-    /*public int Get(BlockType type) // 이거 추가!
-    {
-        if (items.TryGetValue(type, out int count))
-            return count;
-        return 0;
-    }*/
 }
