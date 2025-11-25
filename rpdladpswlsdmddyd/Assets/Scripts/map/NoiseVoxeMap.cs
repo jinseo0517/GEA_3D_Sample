@@ -80,6 +80,9 @@ public class NoiseVoxeMap : MonoBehaviour
     public GameObject blockPrefabDirt;
     public GameObject blockPrefabGrass;
     public GameObject blockPrefabWater;
+    // 다이아몬드 프리팹 추가
+    public GameObject blockPrefabDiamond;
+
     public int width = 20;
     public int depth = 20;
     public int maxHeight = 16; // Y
@@ -100,13 +103,24 @@ public class NoiseVoxeMap : MonoBehaviour
                 float noise = Mathf.PerlinNoise(nx, nz);
                 int h = Mathf.FloorToInt(noise * maxHeight);
                 if (h <= 0) h = 1;
+
                 for (int y = 0; y <= h; y++)
                 {
-                    if (y == h)
+                    // 다이아몬드 생성 로직 (가장 아래층, 1% 확률)
+                    if (y == 1 && Random.Range(0, 100) < 1)
+                    {
+                        PlaceDiamond(x, y, z);
+                    }
+                    else if (y == h)
+                    {
                         PlaceGrass(x, y, z);
+                    }
                     else
+                    {
                         PlaceDirt(x, y, z);
+                    }
                 }
+
                 for (int y = h + 1; y <= waterLevel; y++)
                 {
                     PlaceWater(x, y, z);
@@ -114,6 +128,7 @@ public class NoiseVoxeMap : MonoBehaviour
             }
         }
     }
+
     private void PlaceWater(int x, int y, int z)
     {
         var go = Instantiate(blockPrefabWater, new Vector3(x, y, z), Quaternion.identity, transform);
@@ -125,6 +140,7 @@ public class NoiseVoxeMap : MonoBehaviour
         b.dropCount = 1;
         b.mineable = false;
     }
+
     private void PlaceDirt(int x, int y, int z)
     {
         var go = Instantiate(blockPrefabDirt, new Vector3(x, y, z), Quaternion.identity, transform);
@@ -136,6 +152,7 @@ public class NoiseVoxeMap : MonoBehaviour
         b.dropCount = 1;
         b.mineable = true;
     }
+
     private void PlaceGrass(int x, int y, int z)
     {
         var go = Instantiate(blockPrefabGrass, new Vector3(x, y, z), Quaternion.identity, transform);
@@ -146,5 +163,36 @@ public class NoiseVoxeMap : MonoBehaviour
         b.maxHP = 3;
         b.dropCount = 1;
         b.mineable = true;
+    }
+
+    // Diamond 블록 생성 메서드 추가
+    private void PlaceDiamond(int x, int y, int z)
+    {
+        var go = Instantiate(blockPrefabDiamond, new Vector3(x, y, z), Quaternion.identity, transform);
+        go.name = $"Diamond_{x}_{y}_{z}";
+
+        var b = go.GetComponent<Block>() ?? go.AddComponent<Block>();
+        b.type = BlockType.Diamond; // BlockType.Diamond 사용
+        b.maxHP = 10;                // 다이아몬드 체력 설정 (예시)
+        b.dropCount = 1;
+        b.mineable = true;
+    }
+    public void PlaceTile(Vector3Int pos, BlockType type)
+    {
+        switch (type)
+        {
+            case BlockType.Dirt:
+                PlaceDirt(pos.x, pos.y, pos.z);
+                break;
+            case BlockType.Grass:
+                PlaceGrass(pos.x, pos.y, pos.z);
+                break;
+            case BlockType.Water:
+                PlaceWater(pos.x, pos.y, pos.z);
+                break;
+            case BlockType.Diamond:
+                PlaceDiamond(pos.x, pos.y, pos.z);
+                break;
+        }
     }
 }

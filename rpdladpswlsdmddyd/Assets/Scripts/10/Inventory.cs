@@ -5,32 +5,39 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public Dictionary<BlockType, int> items = new();
-    public List<BlockType> acquiredOrder = new(); // 획득 순서 저장
+    InventoryUI invenUI;
+    private void Start()
+    {
+        invenUI = FindObjectOfType<InventoryUI>();
+    }
 
     public void Add(BlockType type, int count = 1)
     {
-        if (!items.ContainsKey(type))
-        {
-            items[type] = 0;
-            acquiredOrder.Add(type); // 처음 획득한 블록이면 순서에 추가
-        }
-
+        if (!items.ContainsKey(type)) items[type] = 0;
         items[type] += count;
-        Debug.Log($"[Inventory] +{count} {type} ( {items[type]})");
+        Debug.Log($"[inven] +{count} {type} (총 {items[type]})");
+        invenUI.UpdateInventory(this);
     }
 
     public bool Consume(BlockType type, int count = 1)
     {
-        if (!items.TryGetValue(type, out var have) || have < count) return false;
+        if(!items.TryGetValue(type, out var have) || have < count) return false;
         items[type] = have - count;
-        Debug.Log($"[Inventory] -{count} {type} (= {items[type]})");
+        Debug.Log($"[inven] -{count} {type} (총 {items[type]})");
+        if (items[type] == 0)
+        {
+            items.Remove(type);
+            invenUI.selectedIndex = -1;
+            invenUI.ResetSelection();
+        }
+        invenUI.UpdateInventory(this);
         return true;
     }
 
-    public int Get(BlockType type) // 이거 추가!
+    /*public int Get(BlockType type) // 이거 추가!
     {
         if (items.TryGetValue(type, out int count))
             return count;
         return 0;
-    }
+    }*/
 }
